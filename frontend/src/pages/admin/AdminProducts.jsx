@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Plus, Search, Edit2, Trash2, Filter } from 'lucide-react';
+import { Package, Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { products as initialProducts } from '../../data/products';
 import { formatPrice } from '../../lib/utils';
@@ -38,10 +38,7 @@ const AdminProducts = () => {
                         className="w-full pl-12 pr-4 py-4 bg-cream-50 dark:bg-deepbrown-900 border-none rounded-2xl text-deepbrown-900 dark:text-cream-50 focus:ring-2 focus:ring-terracotta-500/50 transition-all font-medium"
                     />
                 </div>
-                <button className="flex items-center gap-2 px-6 py-4 bg-cream-50 dark:bg-deepbrown-900 text-deepbrown-600 dark:text-cream-200 rounded-2xl font-bold hover:bg-terracotta-500 hover:text-white transition-all">
-                    <Filter className="w-5 h-5" />
-                    <span>Filter</span>
-                </button>
+
             </div>
 
             {/* Product Table */}

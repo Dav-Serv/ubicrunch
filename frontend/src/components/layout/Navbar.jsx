@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ShoppingCart, Menu, X, Sun, Moon } from 'lucide-react';
+import { ShoppingCart, Menu, X, Sun, Moon, User } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
@@ -45,7 +45,7 @@ const Navbar = () => {
     }, []);
 
     const navLinks = [
-        { name: 'Home', href: '/home' },
+        { name: 'Home', href: '/' },
         { name: 'Shop', href: '#shop' },
         { name: 'About', href: '#about' },
         { name: 'Contact', href: '#contact' },
@@ -60,7 +60,7 @@ const Navbar = () => {
         >
             <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
                 {/* Logo */}
-                <a href="/home" className="text-2xl font-bold font-sans tracking-tight text-deepbrown-900 dark:text-cream-100">
+                <a href="/" className="text-2xl font-bold font-sans tracking-tight text-deepbrown-900 dark:text-cream-100">
                     Deep Chock <span className="text-terracotta-500">Ubi</span>
                 </a>
 
@@ -111,12 +111,13 @@ const Navbar = () => {
                             </button>
                         </div>
                     ) : (
-                        <a
-                            href="/login"
-                            className="hidden md:block px-6 py-2 border-2 border-deepbrown-900 dark:border-cream-100 text-deepbrown-900 dark:text-cream-100 rounded-full font-bold hover:bg-deepbrown-900 hover:text-white dark:hover:bg-cream-100 dark:hover:text-deepbrown-900 transition-all"
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors"
+                            aria-label="Login"
                         >
-                            Login
-                        </a>
+                            <User className="w-6 h-6 text-deepbrown-900 dark:text-cream-100" />
+                        </button>
                     )}
 
                     <button

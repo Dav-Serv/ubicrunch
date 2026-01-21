@@ -15,7 +15,7 @@ const schema = z.object({
     address: z.string().min(10, "Address is too short"),
     city: z.string().min(2, "City is required"),
     zipCode: z.string().min(5, "Invalid zip code"),
-    paymentMethod: z.enum(["cod", "transfer"], {
+    paymentMethod: z.enum(["dana", "gopay", "ovo", "shopeepay"], {
         required_error: "Please select a payment method",
     }),
 });
@@ -142,29 +142,55 @@ const Checkout = () => {
                                 <h2 className="text-xl font-bold text-deepbrown-900 dark:text-cream-50 mb-6">Payment Method</h2>
                                 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${errors.paymentMethod ? 'border-red-500' : 'border-deepbrown-100 dark:border-deepbrown-700'} hover:border-terracotta-500`}>
+                                    <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${errors.paymentMethod ? 'border-red-500' : 'border-deepbrown-100 dark:border-deepbrown-700'} hover:border-terracotta-500 hover:shadow-lg hover:scale-105 hover:-translate-y-1`}>
                                         <input 
                                             type="radio"
                                             {...register("paymentMethod")}
-                                            value="cod"
+                                            value="dana"
                                             className="w-4 h-4 text-terracotta-500 border-gray-300 focus:ring-terracotta-500"
                                         />
                                         <div className="ml-4">
-                                            <p className="font-bold text-deepbrown-900 dark:text-cream-50">Cash on Delivery (COD)</p>
-                                            <p className="text-xs text-deepbrown-500 dark:text-cream-200/60 text-wrap whitespace-normal">Pay when your food arrives</p>
+                                            <p className="font-bold text-deepbrown-900 dark:text-cream-50">Dana</p>
+                                            <p className="text-xs text-deepbrown-500 dark:text-cream-200/60 text-wrap whitespace-normal">Bayar dengan Dana</p>
                                         </div>
                                     </label>
 
-                                    <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${errors.paymentMethod ? 'border-red-500' : 'border-deepbrown-100 dark:border-deepbrown-700'} hover:border-terracotta-500`}>
+                                    <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${errors.paymentMethod ? 'border-red-500' : 'border-deepbrown-100 dark:border-deepbrown-700'} hover:border-terracotta-500 hover:shadow-lg hover:scale-105 hover:-translate-y-1`}>
                                         <input 
                                             type="radio"
                                             {...register("paymentMethod")}
-                                            value="transfer"
+                                            value="gopay"
                                             className="w-4 h-4 text-terracotta-500 border-gray-300 focus:ring-terracotta-500"
                                         />
                                         <div className="ml-4">
-                                            <p className="font-bold text-deepbrown-900 dark:text-cream-50">Manual Transfer</p>
-                                            <p className="text-xs text-deepbrown-500 dark:text-cream-200/60 text-wrap whitespace-normal">Transfer to our bank account</p>
+                                            <p className="font-bold text-deepbrown-900 dark:text-cream-50">GoPay</p>
+                                            <p className="text-xs text-deepbrown-500 dark:text-cream-200/60 text-wrap whitespace-normal">Bayar dengan GoPay</p>
+                                        </div>
+                                    </label>
+
+                                    <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${errors.paymentMethod ? 'border-red-500' : 'border-deepbrown-100 dark:border-deepbrown-700'} hover:border-terracotta-500 hover:shadow-lg hover:scale-105 hover:-translate-y-1`}>
+                                        <input 
+                                            type="radio"
+                                            {...register("paymentMethod")}
+                                            value="ovo"
+                                            className="w-4 h-4 text-terracotta-500 border-gray-300 focus:ring-terracotta-500"
+                                        />
+                                        <div className="ml-4">
+                                            <p className="font-bold text-deepbrown-900 dark:text-cream-50">OVO</p>
+                                            <p className="text-xs text-deepbrown-500 dark:text-cream-200/60 text-wrap whitespace-normal">Bayar dengan OVO</p>
+                                        </div>
+                                    </label>
+
+                                    <label className={`relative flex items-center p-4 border rounded-xl cursor-pointer transition-all ${errors.paymentMethod ? 'border-red-500' : 'border-deepbrown-100 dark:border-deepbrown-700'} hover:border-terracotta-500 hover:shadow-lg hover:scale-105 hover:-translate-y-1`}>
+                                        <input 
+                                            type="radio"
+                                            {...register("paymentMethod")}
+                                            value="shopeepay"
+                                            className="w-4 h-4 text-terracotta-500 border-gray-300 focus:ring-terracotta-500"
+                                        />
+                                        <div className="ml-4">
+                                            <p className="font-bold text-deepbrown-900 dark:text-cream-50">ShopeePay</p>
+                                            <p className="text-xs text-deepbrown-500 dark:text-cream-200/60 text-wrap whitespace-normal">Bayar dengan ShopeePay</p>
                                         </div>
                                     </label>
                                 </div>

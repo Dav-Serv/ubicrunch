@@ -8,9 +8,11 @@ import {
     LogOut,
     Menu,
     X,
-    Bell
+
+    Mail
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import api from '../../api/api';
 
 const AdminLayout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -21,8 +23,21 @@ const AdminLayout = ({ children }) => {
         { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
         { icon: Package, label: 'Produk', path: '/admin/products' },
         { icon: ShoppingCart, label: 'Penjualan', path: '/admin/sales' },
+        { icon: Mail, label: 'Pesan Masuk', path: '/admin/messages' },
         { icon: Settings, label: 'Settings', path: '/admin/settings' },
     ];
+
+    const handleLogout = async () => {
+        try {
+            await api.post('/admin/logout');
+        } catch (error) {
+            console.error('Logout failed', error);
+        } finally {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            navigate('/');
+        }
+    };
 
     return (
         <div className="min-h-screen bg-cream-50 dark:bg-deepbrown-900 flex font-sans">
@@ -63,7 +78,7 @@ const AdminLayout = ({ children }) => {
 
                 <div className="p-6 border-t border-deepbrown-50 dark:border-white/5">
                     <button 
-                        onClick={() => navigate('/')}
+                        onClick={handleLogout}
                         className="w-full flex items-center gap-4 px-4 py-4 text-red-500 dark:text-red-400 hover:bg-red-500/10 rounded-2xl transition-all"
                     >
                         <LogOut className="w-6 h-6 shrink-0" />
@@ -87,10 +102,7 @@ const AdminLayout = ({ children }) => {
                     </button>
 
                     <div className="flex items-center gap-6">
-                        <button className="relative p-2.5 bg-cream-50 dark:bg-deepbrown-900 rounded-xl text-deepbrown-500 dark:text-cream-200 transition-all hover:text-terracotta-500">
-                            <Bell className="w-5 h-5" />
-                            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-terracotta-500 rounded-full border-2 border-white dark:border-deepbrown-800" />
-                        </button>
+
                         <div className="flex items-center pl-6 border-l border-deepbrown-50 dark:border-deepbrown-700">
                             <div className="text-right hidden sm:block">
                                 <p className="text-sm font-black text-deepbrown-900 dark:text-cream-50">Admin Ubi</p>

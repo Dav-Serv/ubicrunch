@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
     User, 
-    Lock, 
-    Bell, 
+ 
+ 
     Moon, 
     Sun, 
     Shield, 
@@ -16,6 +16,48 @@ import { motion } from 'framer-motion';
 
 const AdminSettings = () => {
     const { theme, toggleTheme } = useTheme();
+    
+    // Get user data from localStorage
+    const [profileData, setProfileData] = useState({
+        fullName: 'Admin Ubi',
+        email: 'admin@gmail.com'
+    });
+    const [isSaving, setIsSaving] = useState(false);
+    
+    useEffect(() => {
+        // Load user data from localStorage
+        const userData = JSON.parse(localStorage.getItem('user') || '{}');
+        if (userData.name || userData.email) {
+            setProfileData({
+                fullName: userData.name || 'Admin Ubi',
+                email: userData.email || 'admin@gmail.com'
+            });
+        }
+    }, []);
+    
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setProfileData(prev => ({ ...prev, [name]: value }));
+    };
+    
+    const handleSaveProfile = async () => {
+        setIsSaving(true);
+        
+        // Simulate API call (replace with actual API later)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Update localStorage
+        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const updatedUser = {
+            ...currentUser,
+            name: profileData.fullName,
+            email: profileData.email
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        
+        setIsSaving(false);
+        alert('Profil berhasil diperbarui!');
+    };
 
     return (
         <AdminLayout>
@@ -47,8 +89,10 @@ const AdminSettings = () => {
                                     <div className="relative">
                                         <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-deepbrown-400" />
                                         <input 
-                                            type="text" 
-                                            defaultValue="Admin Ubi"
+                                            type="text"
+                                            name="fullName"
+                                            value={profileData.fullName}
+                                            onChange={handleInputChange}
                                             className="w-full pl-12 pr-4 py-4 bg-cream-50 dark:bg-deepbrown-900 border-none rounded-2xl text-sm font-bold text-deepbrown-900 dark:text-cream-50 focus:ring-2 focus:ring-terracotta-500 transition-all"
                                         />
                                     </div>
@@ -60,8 +104,10 @@ const AdminSettings = () => {
                                     <div className="relative">
                                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-deepbrown-400" />
                                         <input 
-                                            type="email" 
-                                            defaultValue="admin@gmail.com"
+                                            type="email"
+                                            name="email"
+                                            value={profileData.email}
+                                            onChange={handleInputChange}
                                             className="w-full pl-12 pr-4 py-4 bg-cream-50 dark:bg-deepbrown-900 border-none rounded-2xl text-sm font-bold text-deepbrown-900 dark:text-cream-50 focus:ring-2 focus:ring-terracotta-500 transition-all"
                                         />
                                     </div>
@@ -84,49 +130,19 @@ const AdminSettings = () => {
                             </div>
 
                             <div className="pt-4 flex justify-end">
-                                <button className="flex items-center gap-2 px-8 py-4 bg-terracotta-500 hover:bg-terracotta-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-terracotta-500/20 active:scale-95">
+                                <button 
+                                    onClick={handleSaveProfile}
+                                    disabled={isSaving}
+                                    className="flex items-center gap-2 px-8 py-4 bg-terracotta-500 hover:bg-terracotta-600 text-white rounded-2xl font-black transition-all shadow-lg shadow-terracotta-500/20 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
                                     <Save className="w-5 h-5" />
-                                    <span>Simpan Perubahan</span>
+                                    <span>{isSaving ? 'Menyimpan...' : 'Simpan Perubahan'}</span>
                                 </button>
                             </div>
                         </div>
                     </section>
 
-                    <section className="bg-white dark:bg-deepbrown-800 rounded-[2.5rem] border border-deepbrown-50 dark:border-deepbrown-700 shadow-sm overflow-hidden">
-                        <div className="p-8 border-b border-deepbrown-50 dark:border-deepbrown-700 flex items-center gap-4">
-                            <div className="w-12 h-12 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center">
-                                <Lock className="w-6 h-6 text-red-500" />
-                            </div>
-                            <div>
-                                <h2 className="text-xl font-black text-deepbrown-900 dark:text-cream-50">Keamanan</h2>
-                                <p className="text-xs text-deepbrown-400 dark:text-cream-200/40 font-bold uppercase tracking-widest">Ubah Kata Sandi</p>
-                            </div>
-                        </div>
-                        <div className="p-8 space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-black text-deepbrown-400 dark:text-cream-200/40 uppercase tracking-widest mb-3 ml-1">
-                                        Password Baru
-                                    </label>
-                                    <input 
-                                        type="password" 
-                                        placeholder="••••••••"
-                                        className="w-full px-6 py-4 bg-cream-50 dark:bg-deepbrown-900 border-none rounded-2xl text-sm font-bold text-deepbrown-900 dark:text-cream-50 focus:ring-2 focus:ring-terracotta-500 transition-all"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-black text-deepbrown-400 dark:text-cream-200/40 uppercase tracking-widest mb-3 ml-1">
-                                        Konfirmasi Password
-                                    </label>
-                                    <input 
-                                        type="password" 
-                                        placeholder="••••••••"
-                                        className="w-full px-6 py-4 bg-cream-50 dark:bg-deepbrown-900 border-none rounded-2xl text-sm font-bold text-deepbrown-900 dark:text-cream-50 focus:ring-2 focus:ring-terracotta-500 transition-all"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </section>
+
                 </div>
 
                 {/* Right Column: Preferences */}
@@ -167,28 +183,7 @@ const AdminSettings = () => {
                         </div>
                     </section>
 
-                    <section className="bg-white dark:bg-deepbrown-800 rounded-[2.5rem] border border-deepbrown-50 dark:border-deepbrown-700 shadow-sm overflow-hidden p-8">
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-10 h-10 bg-orange-50 dark:bg-orange-900/20 rounded-xl flex items-center justify-center">
-                                <Bell className="w-5 h-5 text-orange-500" />
-                            </div>
-                            <h3 className="font-black text-deepbrown-900 dark:text-cream-50">Notifikasi</h3>
-                        </div>
-                        <div className="space-y-4">
-                            {[
-                                { label: 'Email Pesanan Baru', active: true },
-                                { label: 'Laporan Mingguan', active: false },
-                                { label: 'Update Sistem', active: true }
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-center justify-between">
-                                    <span className="text-sm font-bold text-deepbrown-600 dark:text-cream-200/60">{item.label}</span>
-                                    <div className={`w-12 h-6 rounded-full relative transition-colors cursor-pointer ${item.active ? 'bg-terracotta-500' : 'bg-cream-200/50 dark:bg-deepbrown-700'}`}>
-                                        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${item.active ? 'right-1' : 'left-1'}`} />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+
                 </div>
             </div>
         </AdminLayout>

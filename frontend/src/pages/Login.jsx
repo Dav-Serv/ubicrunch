@@ -6,12 +6,11 @@ import api from '../api/api';
 
 const Login = () => {
     const navigate = useNavigate();
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const formData = new FormData(e.target);
-        const email = formData.get('email');
-        const password = formData.get('password');
 
         try {
             const response = await api.post('/login', { email, password });
@@ -21,8 +20,12 @@ const Login = () => {
             localStorage.setItem('token', token);
             localStorage.setItem('user', JSON.stringify(user));
             
-            // Success redirect
-            navigate('/admin');
+            // Redirect based on role
+            if (user.role === 'admin') {
+                navigate('/admin');
+            } else {
+                navigate('/');
+            }
         } catch (error) {
             console.error('Login failed:', error);
             alert(error.response?.data?.message || 'Login failed. Please check your credentials.');
@@ -51,11 +54,11 @@ const Login = () => {
                 {/* Title */}
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-bold text-cream-50 mb-2">Selamat Datang</h1>
-                    <p className="text-cream-200/60 font-medium">Silakan masuk untuk melanjutkan</p>
+                    <p className="text-cream-200/60 font-medium">Silakan masuk Admin</p>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleLogin} className="space-y-6">
+                <form onSubmit={handleLogin} className="space-y-6" autoComplete="off">
                     <div>
                         <label className="block text-sm font-bold text-cream-200 mb-3 ml-1">
                             Email Address
@@ -67,7 +70,9 @@ const Login = () => {
                             <input 
                                 type="email"
                                 name="email"
-                                defaultValue="admin@foodapp.test"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                autoComplete="new-password"
                                 className="w-full bg-cream-50 border-none rounded-2xl py-4 pl-12 pr-4 text-deepbrown-900 font-bold placeholder:text-deepbrown-300 focus:outline-none focus:ring-2 focus:ring-terracotta-500/50 transition-all shadow-inner"
                                 placeholder="Enter your email"
                             />
@@ -85,7 +90,9 @@ const Login = () => {
                             <input 
                                 type="password"
                                 name="password"
-                                defaultValue="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                autoComplete="new-password"
                                 className="w-full bg-cream-50 border-none rounded-2xl py-4 pl-12 pr-4 text-deepbrown-900 font-bold placeholder:text-deepbrown-300 focus:outline-none focus:ring-2 focus:ring-terracotta-500/50 transition-all shadow-inner"
                                 placeholder="Enter your password"
                             />
@@ -104,14 +111,11 @@ const Login = () => {
                 </form>
 
                 {/* Footer */}
-                <div className="text-center mt-10">
-                    <p className="text-cream-200/60 font-medium">
-                        Belum punya akun? <button className="text-terracotta-400 hover:text-terracotta-300 font-bold transition-colors">Daftar disini</button>
-                    </p>
-                </div>
+
             </motion.div>
         </div>
     );
 };
+
 
 export default Login;
