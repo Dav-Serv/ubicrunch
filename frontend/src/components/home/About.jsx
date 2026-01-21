@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
-import aboutPremium from '../../assets/images/hero-premium.png';
 
 const About = () => {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -23,11 +22,11 @@ const About = () => {
                         transition={{ duration: 0.8 }}
                         className="md:w-1/2 relative"
                     >
-                        <div className="relative rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white">
+                        <div className="relative w-full max-w-[500px] overflow-hidden bg-transparent mx-auto md:mx-0">
                             <img 
-                                src={aboutPremium} 
-                                alt="UbiCrunch Farm" 
-                                className="w-full h-[500px] object-cover hover:scale-105 transition-transform duration-700"
+                                src="/images/about-logo.png" 
+                                alt="Deep Choc Ubi Logo" 
+                                className="w-full h-[500px] object-contain hover:scale-105 transition-transform duration-700"
                             />
                             {/* Floating Stats */}
                             <div className="absolute bottom-6 right-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg">
@@ -52,7 +51,7 @@ const About = () => {
                                 Redefining the <span className="text-gradient">Snack Experience</span>
                             </h2>
                             <p className="text-lg text-deepbrown-600 dark:text-cream-200/80 leading-relaxed mb-6">
-                                UbiCrunch starts with a simple mission: to bring the authentic sweetness of local Indonesian sweet potatoes to the world, packaged in a modern, healthy, and crunchy delight. 
+                                Deep Chock Ubi starts with a simple mission: to bring the authentic sweetness of local Indonesian sweet potatoes to the world, packaged in a modern, healthy, and crunchy delight. 
                             </p>
                             
                             <AnimatePresence>

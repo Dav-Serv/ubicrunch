@@ -70,10 +70,10 @@ const Hero = () => {
                         >
                             {/* Placeholder for Hero Image - In real app, this would be a high-res transparent PNG */}
                             <div className="w-full aspect-square relative flex items-center justify-center">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-terracotta-400 to-yellow-400 dark:from-terracotta-800 dark:to-yellow-700/50 rounded-full blur-[100px] opacity-20" />
+                                <div className="absolute inset-0 bg-linear-to-tr from-terracotta-400 to-yellow-400 dark:from-terracotta-800 dark:to-yellow-700/50 rounded-full blur-[100px] opacity-20" />
                                 <img 
                                     src={ubiCoklat} 
-                                    alt="UbiCrunch Premium" 
+                                    alt="Deep Chock Ubi Premium" 
                                     className="w-[80%] rounded-3xl object-cover aspect-square drop-shadow-2xl z-20 hover:scale-105 transition-transform duration-500 cursor-pointer"
                                 />
                                 
