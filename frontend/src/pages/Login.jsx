@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Lock, LogIn, ArrowRight } from 'lucide-react';
+import { Mail, Lock, LogIn, ArrowRight, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/api';
 
@@ -44,6 +44,14 @@ const Login = () => {
                 transition={{ duration: 0.6 }}
                 className="w-full max-w-[480px] bg-deepbrown-800 border border-white/5 rounded-[40px] p-8 md:p-12 shadow-2xl relative z-10"
             >
+                {/* Back Button */}
+                <button
+                    onClick={() => navigate('/')}
+                    className="absolute top-6 left-6 p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all group"
+                    aria-label="Back to home"
+                >
+                    <ArrowLeft className="w-5 h-5 text-cream-200 group-hover:text-white transition-colors" />
+                </button>
                 {/* Header Icon */}
                 <div className="flex justify-center mb-8">
                     <div className="w-20 h-20 bg-linear-to-br from-terracotta-400 to-terracotta-600 rounded-3xl flex items-center justify-center shadow-lg shadow-terracotta-500/20">

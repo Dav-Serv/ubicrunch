@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../lib/utils';
+import api from '../api/api';
 
 const schema = z.object({
     fullName: z.string().min(2, "Name must be at least 2 characters"),
@@ -21,25 +22,41 @@ const schema = z.object({
 });
 
 const Checkout = () => {
-    const { cartItems, cartTotal } = useCart();
+    const { cartItems, cartTotal, clearCart } = useCart();
     const navigate = useNavigate();
     
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(schema)
     });
 
-    const onSubmit = (data) => {
-        // Mock order submission
-        console.log("Order submitted:", data);
-        
-        // Generate a random order ID for simulation
-        const orderId = Math.floor(100000 + Math.random() * 900000);
-        
-        // In a real app, this would be an API call
-        // we'll simulate a small delay
-        setTimeout(() => {
-            navigate(`/order-status/${orderId}`);
-        }, 1000);
+    const onSubmit = async (data) => {
+        try {
+            // Prepare order data
+            const orderData = {
+                customer_name: data.fullName,
+                customer_email: data.email,
+                customer_phone: data.phone,
+                shipping_address: `${data.address}, ${data.city}, ${data.zipCode}`,
+                payment_method: data.paymentMethod,
+                items: cartItems.map(item => ({
+                    menu_id: item.id,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                total: cartTotal + 15000 // Include shipping
+            };
+
+            // Submit order to backend
+            const response = await api.post('/order-buat', orderData);
+            const { order_code } = response.data;
+
+            // Clear cart and navigate to order status
+            clearCart();
+            navigate(`/order-status/${order_code}`);
+        } catch (error) {
+            console.error('Order failed:', error);
+            alert(error.response?.data?.message || 'Gagal membuat pesanan. Silakan coba lagi.');
+        }
     };
 
     if (cartItems.length === 0) {

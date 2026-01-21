@@ -7,6 +7,7 @@ const Contact = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        whatsapp: '',
         subject: 'General Inquiry',
         message: ''
     });
@@ -23,7 +24,7 @@ const Contact = () => {
         try {
             await api.post('/contact', formData);
             setStatus({ loading: false, error: null, success: true });
-            setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
+            setFormData({ name: '', email: '', whatsapp: '', subject: 'General Inquiry', message: '' });
             alert('Pesan berhasil dikirim!'); 
         } catch (error) {
             setStatus({ loading: false, error: 'Gagal mengirim pesan. Silakan coba lagi.', success: false });
@@ -134,6 +135,19 @@ const Contact = () => {
                                         className="w-full p-4 rounded-xl border border-gray-200 dark:border-deepbrown-600 focus:outline-none focus:ring-2 focus:ring-terracotta-500 bg-gray-50/50 dark:bg-deepbrown-900 dark:text-cream-50"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium text-deepbrown-700 dark:text-cream-200">WhatsApp Number</label>
+                                    <input 
+                                        type="text" 
+                                        name="whatsapp"
+                                    value={formData.whatsapp}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 08123456789" 
+                                    required
+                                    className="w-full p-4 rounded-xl border border-gray-200 dark:border-deepbrown-600 focus:outline-none focus:ring-2 focus:ring-terracotta-500 bg-gray-50/50 dark:bg-deepbrown-900 dark:text-cream-50"
+                                />
                             </div>
 
                             <div className="space-y-2">

@@ -67,7 +67,7 @@ const About = () => {
                             className="text-lg text-deepbrown-600 dark:text-cream-200/80 leading-relaxed font-medium"
                         >
                             <p className="mb-6">
-                                Deep Chock Ubi isn't just a snack; it's a statement. We believe that indulgence shouldn't cost your health. That's why we've perfected the art of vacuum frying to bring you the crunchiest, sweetest, guilt-free sweet potato chips you've ever tasted.
+                                Deep Chock Ubi isn't just a snack it's a statement. We believe that indulgence shouldn't cost your health. That's why we've perfected the art of vacuum frying to bring you the crunchiest, sweetest, guilt-free sweet potato chips you've ever tasted.
                             </p>
                             
                             <AnimatePresence>
