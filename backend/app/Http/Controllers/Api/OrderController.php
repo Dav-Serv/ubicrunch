@@ -62,15 +62,15 @@ class OrderController extends Controller
             foreach ($data['items'] as $item) {
                 $menu = Menu::lockForUpdate()->findOrFail($item['menu_id']);
 
-                if ($menu->stock < $item['qty']) {
+                if ($menu->stock < $item['quantity']) {
                     throw new \Exception("Stok {$menu->name} tidak mencukupi");
                 }
 
                 // kurangi stok
-                $menu->decrement('stock', $item['qty']);
+                $menu->decrement('stock', $item['quantity']);
 
 
-                $subtotal = $menu->price * $item['qty'];
+                $subtotal = $menu->price * $item['quantity'];
                 $total += $subtotal;
 
                 OrderItem::create([

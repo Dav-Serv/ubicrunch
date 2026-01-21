@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\{
     LoginController,
-    LogoutController
+    LogoutController,
 };
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\MenuController;
@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Route;
 
 // menu
 Route::get('/menu', [MenuController::class, 'menu']);
-
-// contact
-Route::post('/contact', [MessageController::class, 'store']);
 
 // order
 Route::post('/order-buat', [OrderController::class, 'store']);
@@ -30,7 +27,6 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
 
     // messages
     Route::get('/messages', [MessageController::class, 'index']);
-
     // menu
     Route::post('/menu-tambah', [MenuController::class, 'store']);
     Route::post('/menu-update/{menu}', [MenuController::class, 'update']);

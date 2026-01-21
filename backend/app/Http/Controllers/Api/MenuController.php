@@ -9,11 +9,9 @@ use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
-    public function menu()
-    {
+    public function menu(){
         return response()->json(
-            Menu::where('is_available', true)->latest()->get()
-        );
+            Menu::where('is_available', true)->latest()->get());
     }
 
     // PUBLIC - DETAIL MENU
