@@ -3,6 +3,7 @@ import { Package, ShoppingCart, DollarSign, Users } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import StatCard from '../../components/admin/StatCard';
 import CustomerTable from '../../components/admin/CustomerTable';
+import api from '../../api/api';
 
 const AdminDashboard = () => {
     const [stats, setStats] = useState({
@@ -12,26 +13,37 @@ const AdminDashboard = () => {
     });
 
     const [customers, setCustomers] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulating data fetch
-        const timer = setTimeout(() => {
-            setStats({
-                totalProduk: 120,
-                frekuensiPenjualan: 450,
-                totalPenjualan: 15000000
-            });
+        const fetchStats = async () => {
+            try {
+                const response = await api.get('/admin/stats');
+                const { stats, recent_orders } = response.data;
+                
+                setStats({
+                    totalProduk: stats.total_products,
+                    frekuensiPenjualan: stats.total_orders,
+                    totalPenjualan: stats.total_sales
+                });
 
-            setCustomers([
-                { nama: 'Rafly Hermansyah', telepon: '081234567890', alamat: 'Jl. Merdeka No. 10, Jakarta Pusat', status: 'Selesai' },
-                { nama: 'Zaki Ahmad', telepon: '089876543210', alamat: 'Komp. Melati Blok B3, Tangerang', status: 'Proses' },
-                { nama: 'Putri Salsa', telepon: '085512345678', alamat: 'Apartemen Green Park Lt. 5, Bekasi', status: 'Selesai' },
-                { nama: 'Budi Santoso', telepon: '081122334455', alamat: 'Jl. Mawar Indah 2, Depok', status: 'Batal' },
-                { nama: 'Lutfi Hakim', telepon: '087788990011', alamat: 'Perum Gading Serpong, Tangerang', status: 'Proses' },
-            ]);
-        }, 500);
+                // Map backend orders to frontend customer structure
+                const mappedCustomers = recent_orders.map(order => ({
+                    nama: order.customer_name,
+                    telepon: order.customer_phone,
+                    alamat: order.customer_address,
+                    status: order.status // We'll handle translation in CustomerTable
+                }));
 
-        return () => clearTimeout(timer);
+                setCustomers(mappedCustomers);
+            } catch (error) {
+                console.error('Failed to fetch dashboard stats:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchStats();
     }, []);
 
     const formatRupiah = (number) => {
@@ -94,7 +106,13 @@ const AdminDashboard = () => {
                     </button>
                 </div>
                 
-                <CustomerTable data={customers} />
+                {loading ? (
+                    <div className="p-8 text-center text-deepbrown-500 dark:text-cream-200/50 font-medium">
+                        Memuat data overview...
+                    </div>
+                ) : (
+                    <CustomerTable data={customers} />
+                )}
             </div>
         </AdminLayout>
     );

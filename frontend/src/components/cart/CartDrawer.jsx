@@ -78,7 +78,15 @@ const CartDrawer = () => {
                                         className="flex gap-4 p-4 bg-white dark:bg-deepbrown-800 rounded-xl shadow-sm border border-deepbrown-50 dark:border-deepbrown-700"
                                     >
                                         <div className={`w-20 h-20 rounded-lg flex items-center justify-center ${item.color} bg-opacity-20 shrink-0`}>
-                                            <img src={item.image} alt={item.name} className="w-16 drop-shadow-md object-contain" />
+                                            <img 
+                                                src={item.image_url || item.image} 
+                                                alt={item.name} 
+                                                className="w-16 h-16 object-cover rounded-lg drop-shadow-md" 
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = "https://placehold.co/100x100/png?text=Error";
+                                                }}
+                                            />
                                         </div>
                                         <div className="flex-1 flex flex-col justify-between">
                                             <div>

@@ -1,16 +1,23 @@
 import React from 'react';
 
 const CustomerTable = ({ data }) => {
-    const getStatusStyle = (status) => {
-        switch (status.toLowerCase()) {
+    const getStatusInfo = (status) => {
+        const s = status.toLowerCase();
+        switch (s) {
+            case 'completed':
             case 'selesai':
-                return 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400';
+                return { label: 'Selesai', style: 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400' };
+            case 'pending':
+            case 'confirmed':
+            case 'preparing':
+            case 'on_delivery':
             case 'proses':
-                return 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400';
+                return { label: 'Proses', style: 'bg-yellow-100 text-yellow-600 dark:bg-yellow-900/30 dark:text-yellow-400' };
+            case 'cancelled':
             case 'batal':
-                return 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400';
+                return { label: 'Batal', style: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' };
             default:
-                return 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400';
+                return { label: status, style: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400' };
         }
     };
 
@@ -32,8 +39,8 @@ const CustomerTable = ({ data }) => {
                             <td className="px-4 md:px-8 py-4 md:py-6 text-deepbrown-600 dark:text-cream-200/70 font-medium text-sm">{item.telepon}</td>
                             <td className="px-4 md:px-8 py-4 md:py-6 text-deepbrown-600 dark:text-cream-200/70 text-xs md:text-sm max-w-[200px] md:max-w-[250px] truncate">{item.alamat}</td>
                             <td className="px-4 md:px-8 py-4 md:py-6 text-center">
-                                <span className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider shadow-sm ${getStatusStyle(item.status)}`}>
-                                    {item.status}
+                                <span className={`px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-[11px] font-black uppercase tracking-wider shadow-sm ${getStatusInfo(item.status).style}`}>
+                                    {getStatusInfo(item.status).label}
                                 </span>
                             </td>
                         </tr>

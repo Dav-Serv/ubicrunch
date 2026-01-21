@@ -24,19 +24,21 @@ const schema = z.object({
 const Checkout = () => {
     const { cartItems, cartTotal, clearCart } = useCart();
     const navigate = useNavigate();
+    const [isProcessing, setIsProcessing] = React.useState(false);
     
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(schema)
     });
 
     const onSubmit = async (data) => {
+        setIsProcessing(true);
         try {
             // Prepare order data
             const orderData = {
                 customer_name: data.fullName,
                 customer_email: data.email,
                 customer_phone: data.phone,
-                shipping_address: `${data.address}, ${data.city}, ${data.zipCode}`,
+                customer_address: `${data.address}, ${data.city}, ${data.zipCode}`,
                 payment_method: data.paymentMethod,
                 items: cartItems.map(item => ({
                     menu_id: item.id,
@@ -55,7 +57,10 @@ const Checkout = () => {
             navigate(`/order-status/${order_code}`);
         } catch (error) {
             console.error('Order failed:', error);
-            alert(error.response?.data?.message || 'Gagal membuat pesanan. Silakan coba lagi.');
+            const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Gagal membuat pesanan. Silakan coba lagi.';
+            alert(errorMessage);
+        } finally {
+            setIsProcessing(false);
         }
     };
 
@@ -249,15 +254,19 @@ const Checkout = () => {
                             </div>
 
                             <button
-                                onClick={() => {
-                                    // Trigger form submission manually if button is outside form 
-                                    // but here it has form="checkout-form" which is correct
-                                }}
                                 form="checkout-form"
                                 type="submit"
-                                className="w-full mt-8 py-4 bg-terracotta-500 dark:bg-terracotta-600 text-white font-bold rounded-xl hover:bg-terracotta-600 dark:hover:bg-terracotta-500 transition-all shadow-lg active:scale-[0.98]"
+                                disabled={isProcessing}
+                                className={`w-full mt-8 py-4 bg-terracotta-500 dark:bg-terracotta-600 text-white font-bold rounded-xl transition-all shadow-lg active:scale-[0.98] flex items-center justify-center gap-2 ${isProcessing ? 'opacity-70 cursor-not-allowed' : 'hover:bg-terracotta-600 dark:hover:bg-terracotta-500'}`}
                             >
-                                Place Order
+                                {isProcessing ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <span>Processing...</span>
+                                    </>
+                                ) : (
+                                    'Place Order'
+                                )}
                             </button>
                         </div>
                     </div>
