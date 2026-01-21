@@ -14,7 +14,8 @@ class Menu extends Model
         'is_available'
     ];
 
-    public function item(){
-        
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 }
