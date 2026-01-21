@@ -50,7 +50,7 @@ const ProductCard = ({ product }) => {
                         initial={{ scale: 0.95 }}
                         whileHover={{ scale: 1.1, rotate: 2 }}
                         transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                        src={product.image || "https://placehold.co/400x400/png?text=No+Image"}
+                        src={product.image_url || product.image || "https://placehold.co/400x400/png?text=No+Image"}
                         alt={product.name}
                         onError={(e) => {
                             e.target.onerror = null; 

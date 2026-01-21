@@ -16,14 +16,15 @@ class MessageController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
+        $data = $request->validate([
+            'name' => 'required|string',
             'email' => 'required|email',
-            'subject' => 'required',
-            'message' => 'required',
+            'whatsapp' => 'required|string',
+            'subject' => 'required|string',
+            'message' => 'required|string',
         ]);
 
-        $message = Message::create($request->all());
+        $message = Message::create($data);
 
         return response()->json([
             'message' => 'Message sent successfully',

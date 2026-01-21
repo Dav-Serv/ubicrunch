@@ -44,13 +44,13 @@ const AdminDashboard = () => {
 
     return (
         <AdminLayout>
-            <div className="mb-10">
-                <h1 className="text-3xl font-black text-deepbrown-900 dark:text-cream-50">Dashboard Overview</h1>
-                <p className="text-deepbrown-500 dark:text-cream-200/50 mt-1 font-medium">Monitoring performa toko Anda hari ini.</p>
+            <div className="mb-6 md:mb-10">
+                <h1 className="text-2xl md:text-3xl font-black text-deepbrown-900 dark:text-cream-50">Dashboard Overview</h1>
+                <p className="text-sm md:text-base text-deepbrown-500 dark:text-cream-200/50 mt-1 font-medium">Monitoring performa toko Anda hari ini.</p>
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 mb-8 md:mb-12">
                 <StatCard 
                     title="Total Produk" 
                     value={`${stats.totalProduk} Produk`} 
@@ -78,18 +78,18 @@ const AdminDashboard = () => {
             </div>
 
             {/* Customer Table Section */}
-            <div className="bg-white dark:bg-deepbrown-800 rounded-[2.5rem] shadow-sm border border-deepbrown-50 dark:border-deepbrown-700 overflow-hidden">
-                <div className="p-8 border-b border-deepbrown-50 dark:border-deepbrown-700 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-cream-50 dark:bg-deepbrown-900 rounded-2xl flex items-center justify-center">
-                            <Users className="w-6 h-6 text-terracotta-500" />
+            <div className="bg-white dark:bg-deepbrown-800 rounded-2xl md:rounded-[2.5rem] shadow-sm border border-deepbrown-50 dark:border-deepbrown-700 overflow-hidden">
+                <div className="p-4 md:p-8 border-b border-deepbrown-50 dark:border-deepbrown-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 md:gap-4">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-cream-50 dark:bg-deepbrown-900 rounded-xl md:rounded-2xl flex items-center justify-center">
+                            <Users className="w-5 h-5 md:w-6 md:h-6 text-terracotta-500" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black text-deepbrown-900 dark:text-cream-50">Data Pelanggan</h2>
-                            <p className="text-xs text-deepbrown-400 dark:text-cream-200/40 font-bold uppercase tracking-widest mt-0.5">Transaksi Terbaru</p>
+                            <h2 className="text-xl md:text-2xl font-black text-deepbrown-900 dark:text-cream-50">Data Pelanggan</h2>
+                            <p className="text-[10px] md:text-xs text-deepbrown-400 dark:text-cream-200/40 font-bold uppercase tracking-widest mt-0.5">Transaksi Terbaru</p>
                         </div>
                     </div>
-                    <button className="px-6 py-3 bg-terracotta-500 hover:bg-terracotta-600 text-white rounded-2xl text-sm font-black transition-all shadow-lg shadow-terracotta-500/20">
+                    <button className="w-full sm:w-auto px-4 md:px-6 py-2.5 md:py-3 bg-terracotta-500 hover:bg-terracotta-600 text-white rounded-xl md:rounded-2xl text-sm font-black transition-all shadow-lg shadow-terracotta-500/20">
                         Lihat Semua
                     </button>
                 </div>

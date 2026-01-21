@@ -1,161 +1,180 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { 
-    CheckCircle2, 
-    Circle, 
-    Clock, 
-    Utensils, 
-    Truck, 
-    Check, 
-    ArrowLeft,
-    Package,
-    Phone,
-    MapPin
-} from 'lucide-react';
+import { Package, CheckCircle, Clock, XCircle, ArrowLeft, MapPin, Phone, Mail, CreditCard } from 'lucide-react';
 import Layout from '../components/layout/Layout';
+import api from '../api/api';
 import { formatPrice } from '../lib/utils';
 
 const OrderStatus = () => {
-    const { orderId } = useParams();
+    const { code } = useParams();
     const navigate = useNavigate();
-    
-    // In a real app, this would be fetched from the backend
-    // and potentially polled or updated via WebSockets
-    const [status, setStatus] = useState('pending');
-    
-    const statuses = [
-        { id: 'pending', label: 'Order Created', icon: Clock, description: 'Your order has been placed and is waiting for confirmation.' },
-        { id: 'confirmed', label: 'Diterima Resto', icon: CheckCircle2, description: 'The restaurant has accepted your order.' },
-        { id: 'preparing', label: 'Sedang Dimasak', icon: Utensils, description: 'Chef is preparing your delicious meal.' },
-        { id: 'on_delivery', label: 'Dikirim', icon: Truck, description: 'Your order is on the way to your location.' },
-        { id: 'completed', label: 'Selesai', icon: Check, description: 'Order delivered. Enjoy your meal!' },
-    ];
+    const [order, setOrder] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const currentStatusIndex = statuses.findIndex(s => s.id === status);
-
-    // Simulation: slowly advance status (only for demo purposes)
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (status === 'pending') setStatus('confirmed');
-            else if (status === 'confirmed') setStatus('preparing');
-        }, 5000);
-        return () => clearTimeout(timer);
-    }, [status]);
+        fetchOrder();
+    }, [code]);
+
+    const fetchOrder = async () => {
+        try {
+            const response = await api.get(`/order/${code}`);
+            setOrder(response.data);
+            setLoading(false);
+        } catch (err) {
+            setError('Pesanan tidak ditemukan');
+            setLoading(false);
+        }
+    };
+
+    const getStatusInfo = (status) => {
+        const statusMap = {
+            pending: { label: 'Menunggu Konfirmasi', icon: Clock, color: 'text-yellow-500', bg: 'bg-yellow-50 dark:bg-yellow-900/20' },
+            processing: { label: 'Sedang Diproses', icon: Package, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
+            completed: { label: 'Selesai', icon: CheckCircle, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20' },
+            cancelled: { label: 'Dibatalkan', icon: XCircle, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' }
+        };
+        return statusMap[status] || statusMap.pending;
+    };
+
+    if (loading) {
+        return (
+            <Layout>
+                <div className="container mx-auto px-6 py-20 text-center">
+                    <div className="animate-spin w-12 h-12 border-4 border-terracotta-500 border-t-transparent rounded-full mx-auto"></div>
+                    <p className="mt-4 text-deepbrown-600 dark:text-cream-200">Memuat pesanan...</p>
+                </div>
+            </Layout>
+        );
+    }
+
+    if (error) {
+        return (
+            <Layout>
+                <div className="container mx-auto px-6 py-20 text-center">
+                    <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-deepbrown-900 dark:text-cream-50 mb-2">{error}</h2>
+                    <button
+                        onClick={() => navigate('/')}
+                        className="mt-4 px-6 py-3 bg-terracotta-500 text-white rounded-xl font-bold hover:bg-terracotta-600 transition-all"
+                    >
+                        Kembali ke Beranda
+                    </button>
+                </div>
+            </Layout>
+        );
+    }
+
+    const statusInfo = getStatusInfo(order.status);
+    const StatusIcon = statusInfo.icon;
 
     return (
         <Layout>
-            <div className="container mx-auto px-6 py-10 max-w-4xl">
-                <button 
+            <div className="container mx-auto px-6 py-10">
+                <button
                     onClick={() => navigate('/')}
-                    className="flex items-center text-deepbrown-500 hover:text-terracotta-500 transition-colors mb-8 group"
+                    className="flex items-center gap-2 text-deepbrown-600 dark:text-cream-200 hover:text-terracotta-500 transition-colors mb-8"
                 >
-                    <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-                    Back to Home
+                    <ArrowLeft className="w-5 h-5" />
+                    <span className="font-medium">Kembali ke Beranda</span>
                 </button>
 
-                <div className="bg-white dark:bg-deepbrown-800 rounded-3xl shadow-xl overflow-hidden border border-deepbrown-50 dark:border-deepbrown-700">
-                    {/* Header */}
-                    <div className="bg-linear-to-r from-terracotta-500 to-terracotta-600 p-8 text-white">
-                        <div className="flex justify-between items-start">
+                <div className="max-w-4xl mx-auto">
+                    {/* Success Message */}
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-2xl p-6 mb-8 text-center"
+                    >
+                        <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                        <h1 className="text-2xl font-bold text-deepbrown-900 dark:text-cream-50 mb-2">
+                            Pesanan Berhasil Dibuat!
+                        </h1>
+                        <p className="text-deepbrown-600 dark:text-cream-200/80">
+                            Kode Pesanan: <span className="font-bold text-terracotta-600 dark:text-terracotta-400">{order.order_code}</span>
+                        </p>
+                    </motion.div>
+
+                    {/* Order Status */}
+                    <div className="bg-white dark:bg-deepbrown-800 rounded-2xl p-6 shadow-sm border border-deepbrown-50 dark:border-deepbrown-700 mb-8">
+                        <h2 className="text-xl font-bold text-deepbrown-900 dark:text-cream-50 mb-4">Status Pesanan</h2>
+                        <div className={`flex items-center gap-4 p-4 ${statusInfo.bg} rounded-xl`}>
+                            <StatusIcon className={`w-8 h-8 ${statusInfo.color}`} />
                             <div>
-                                <p className="text-terracotta-100 text-sm font-medium mb-1">Order Tracking</p>
-                                <h1 className="text-3xl font-bold">#ORD-{orderId}</h1>
-                            </div>
-                            <div className="bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-sm font-bold">
-                                {status.toUpperCase().replace('_', ' ')}
+                                <p className={`font-bold ${statusInfo.color}`}>{statusInfo.label}</p>
+                                <p className="text-sm text-deepbrown-500 dark:text-cream-200/60">
+                                    {new Date(order.created_at).toLocaleDateString('id-ID', { 
+                                        weekday: 'long', 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    })}
+                                </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="p-8">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                            {/* Left Column: Timeline */}
-                            <div className="md:col-span-2 space-y-8">
-                                <h2 className="text-xl font-bold text-deepbrown-900 dark:text-cream-50">Order Status</h2>
-                                
-                                <div className="relative">
-                                    {/* Vertical Line */}
-                                    <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-100 dark:bg-deepbrown-700" />
-                                    
-                                    <div className="space-y-10 relative">
-                                        {statuses.map((s, index) => {
-                                            const isCompleted = index < currentStatusIndex;
-                                            const isActive = index === currentStatusIndex;
-                                            const Icon = s.icon;
-
-                                            return (
-                                                <div key={s.id} className="flex group">
-                                                    <div className={`relative z-10 flex items-center justify-center w-12 h-12 rounded-full border-4 transition-all duration-500 ${
-                                                        isActive 
-                                                            ? 'bg-terracotta-500 border-terracotta-100 dark:border-terracotta-900/50 text-white scale-110 shadow-lg shadow-terracotta-500/30' 
-                                                            : isCompleted 
-                                                                ? 'bg-green-500 border-green-100 dark:border-green-900/30 text-white' 
-                                                                : 'bg-white dark:bg-deepbrown-800 border-gray-100 dark:border-deepbrown-700 text-gray-300 dark:text-gray-600'
-                                                    }`}>
-                                                        <Icon className="w-5 h-5" />
-                                                    </div>
-                                                    
-                                                    <div className="ml-6">
-                                                        <h3 className={`font-bold transition-colors ${
-                                                            isActive ? 'text-terracotta-600 dark:text-terracotta-400 text-lg' : 
-                                                            isCompleted ? 'text-green-600 dark:text-green-500' : 'text-gray-400 dark:text-gray-600'
-                                                        }`}>
-                                                            {s.label}
-                                                        </h3>
-                                                        <p className={`text-sm mt-1 max-w-sm ${
-                                                            isActive ? 'text-deepbrown-600 dark:text-cream-200' : 'text-gray-400 dark:text-gray-600'
-                                                        }`}>
-                                                            {s.description}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                    {/* Order Items */}
+                    <div className="bg-white dark:bg-deepbrown-800 rounded-2xl p-6 shadow-sm border border-deepbrown-50 dark:border-deepbrown-700 mb-8">
+                        <h2 className="text-xl font-bold text-deepbrown-900 dark:text-cream-50 mb-4">Detail Pesanan</h2>
+                        <div className="space-y-4">
+                            {order.items?.map((item, index) => (
+                                <div key={index} className="flex justify-between items-center border-b border-deepbrown-100 dark:border-deepbrown-700 pb-4 last:border-0 last:pb-0">
+                                    <div>
+                                        <p className="font-bold text-deepbrown-900 dark:text-cream-50">{item.menu_name}</p>
+                                        <p className="text-sm text-deepbrown-500 dark:text-cream-200/60">Qty: {item.quantity}</p>
                                     </div>
+                                    <p className="font-bold text-deepbrown-900 dark:text-cream-50">{formatPrice(item.price * item.quantity)}</p>
+                                </div>
+                            ))}
+                            <div className="pt-4 border-t border-deepbrown-200 dark:border-deepbrown-700">
+                                <div className="flex justify-between text-deepbrown-600 dark:text-cream-200 mb-2">
+                                    <span>Subtotal</span>
+                                    <span>{formatPrice(order.total - 15000)}</span>
+                                </div>
+                                <div className="flex justify-between text-deepbrown-600 dark:text-cream-200 mb-2">
+                                    <span>Ongkir</span>
+                                    <span>Rp 15.000</span>
+                                </div>
+                                <div className="flex justify-between text-xl font-bold text-deepbrown-900 dark:text-cream-50 pt-2 border-t border-deepbrown-100 dark:border-deepbrown-700">
+                                    <span>Total</span>
+                                    <span>{formatPrice(order.total)}</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
 
-                            {/* Right Column: Info */}
-                            <div className="space-y-8">
-                                <div className="bg-cream-50 dark:bg-deepbrown-900/50 p-6 rounded-2xl border border-deepbrown-50 dark:border-deepbrown-800">
-                                    <h3 className="font-bold text-deepbrown-900 dark:text-cream-50 mb-4 flex items-center">
-                                        <Package className="w-4 h-4 mr-2 text-terracotta-500" />
-                                        Delivery Details
-                                    </h3>
-                                    <div className="space-y-4 text-sm">
-                                        <div className="flex items-start">
-                                            <MapPin className="w-4 h-4 mr-3 text-deepbrown-400 shrink-0 mt-0.5" />
-                                            <p className="text-deepbrown-600 dark:text-cream-200">
-                                                Jl. Kuningan Mulia No.1, RT.6/RW.1, Guntur, Kecamatan Setiabudi, Kota Jakarta Selatan, 12980
-                                            </p>
-                                        </div>
-                                        <div className="flex items-center">
-                                            <Phone className="w-4 h-4 mr-3 text-deepbrown-400 shrink-0" />
-                                            <p className="text-deepbrown-600 dark:text-cream-200">0812-3456-7890</p>
-                                        </div>
+                    {/* Shipping & Payment Info */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white dark:bg-deepbrown-800 rounded-2xl p-6 shadow-sm border border-deepbrown-50 dark:border-deepbrown-700">
+                            <h3 className="text-lg font-bold text-deepbrown-900 dark:text-cream-50 mb-4">Informasi Pengiriman</h3>
+                            <div className="space-y-3">
+                                <div className="flex items-start gap-3">
+                                    <MapPin className="w-5 h-5 text-terracotta-500 mt-1" />
+                                    <div>
+                                        <p className="font-medium text-deepbrown-900 dark:text-cream-50">{order.customer_name}</p>
+                                        <p className="text-sm text-deepbrown-600 dark:text-cream-200/80">{order.shipping_address}</p>
                                     </div>
                                 </div>
-
-                                <div className="bg-cream-50 dark:bg-deepbrown-900/50 p-6 rounded-2xl border border-deepbrown-50 dark:border-deepbrown-800">
-                                    <h3 className="font-bold text-deepbrown-900 dark:text-cream-50 mb-4">Payment Method</h3>
-                                    <div className="flex items-center p-3 bg-white dark:bg-deepbrown-800 rounded-xl border border-deepbrown-100 dark:border-deepbrown-700">
-                                        <div className="w-10 h-10 bg-terracotta-100 dark:bg-terracotta-900/30 rounded-lg flex items-center justify-center mr-3">
-                                            <CheckCircle2 className="w-5 h-5 text-terracotta-500" />
-                                        </div>
-                                        <div>
-                                            <p className="font-bold text-deepbrown-900 dark:text-cream-50 text-sm">Cash on Delivery</p>
-                                            <p className="text-xs text-deepbrown-500">Bayar saat sampai</p>
-                                        </div>
-                                    </div>
+                                <div className="flex items-center gap-3">
+                                    <Phone className="w-5 h-5 text-terracotta-500" />
+                                    <p className="text-sm text-deepbrown-600 dark:text-cream-200/80">{order.customer_phone}</p>
                                 </div>
+                                <div className="flex items-center gap-3">
+                                    <Mail className="w-5 h-5 text-terracotta-500" />
+                                    <p className="text-sm text-deepbrown-600 dark:text-cream-200/80">{order.customer_email}</p>
+                                </div>
+                            </div>
+                        </div>
 
-                                <button 
-                                    className="w-full py-4 bg-deepbrown-900 dark:bg-deepbrown-700 text-white font-bold rounded-xl hover:bg-deepbrown-800 dark:hover:bg-deepbrown-600 transition-all flex items-center justify-center"
-                                >
-                                    <Phone className="w-4 h-4 mr-2" />
-                                    Contact Support
-                                </button>
+                        <div className="bg-white dark:bg-deepbrown-800 rounded-2xl p-6 shadow-sm border border-deepbrown-50 dark:border-deepbrown-700">
+                            <h3 className="text-lg font-bold text-deepbrown-900 dark:text-cream-50 mb-4">Metode Pembayaran</h3>
+                            <div className="flex items-center gap-3">
+                                <CreditCard className="w-5 h-5 text-terracotta-500" />
+                                <p className="font-medium text-deepbrown-900 dark:text-cream-50 capitalize">{order.payment_method}</p>
                             </div>
                         </div>
                     </div>
