@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->integer('price');
+            $table->integer('stock');
             $table->text('description')->nullable();
             $table->string('image')->nullable();
             $table->boolean('is_available')->default(true);

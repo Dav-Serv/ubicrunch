@@ -5,12 +5,27 @@ use App\Http\Controllers\Api\Auth\ {
     LogoutController
 };
 use App\Http\Controllers\Api\MenuController;
+use App\Http\Controllers\Api\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+// menu
 Route::get('/menu', [MenuController::class, 'menu']);
+
+// order
+Route::post('/order-buat', [OrderController::class, 'store']);
+Route::get('/order/{code}', [OrderController::class, 'show']);
 
 Route::post('/login', [LoginController::class, 'login']);
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function (){
     Route::post('/logout', [LogoutController::class, 'logout']);
+
+    // menu
+    Route::post('/menu-tambah', [MenuController::class, 'store']);
+    Route::post('/menu-update/{menu}', [MenuController::class, 'update']);
+    Route::delete('/menu-hapus/{menu}', [MenuController::class, 'destroy']);
+
+    // order
+    Route::get('/order', [OrderController::class, 'index']);
+    Route::post('/order-status/{order}', [OrderController::class, 'updateStatus']);
 });

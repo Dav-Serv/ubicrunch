@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('customer_phone');
             $table->text('customer_address');
             $table->decimal('total_price', 12, 2);
+            $table->string('payment_method');
             $table->enum('status', [
                 'pending',
                 'confirmed',
