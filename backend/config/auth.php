@@ -59,6 +59,11 @@ return [
     |
     */
 
+    'api' => [
+        'driver' => 'sanctum',
+        'provider' => 'users',
+    ],
+
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
