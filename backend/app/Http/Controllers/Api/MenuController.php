@@ -9,9 +9,20 @@ use Illuminate\Support\Facades\Storage;
 
 class MenuController extends Controller
 {
-    public function menu(){
+    // PUBLIC - LIST MENU (ONLY AVAILABLE)
+    public function menu()
+    {
         return response()->json(
-            Menu::where('is_available', true)->latest()->get());
+            Menu::where('is_available', true)->latest()->get()
+        );
+    }
+
+    // ADMIN - LIST ALL MENU
+    public function index()
+    {
+        return response()->json(
+            Menu::latest()->paginate(5)
+        );
     }
 
     // PUBLIC - DETAIL MENU
@@ -25,7 +36,7 @@ class MenuController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'price' => 'required|integer|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -50,7 +61,7 @@ class MenuController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'price' => 'required|integer|min:0',
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

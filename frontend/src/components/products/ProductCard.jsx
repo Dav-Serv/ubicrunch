@@ -6,30 +6,11 @@ import { cn, formatPrice } from '../../lib/utils';
 
 const ProductCard = ({ product }) => {
     const { addToCart } = useCart();
-
-    if (product.isComingSoon) {
-        return (
-            <motion.div
-                className="group relative bg-white dark:bg-deepbrown-800 rounded-[2.5rem] p-3 shadow-sm border border-deepbrown-50 dark:border-deepbrown-700 overflow-hidden flex flex-col min-h-[500px]"
-            >
-                <div className={cn(
-                    "absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-5",
-                    product.color
-                )} />
-                <div className="relative z-10 flex-1 flex flex-col items-center justify-center gap-6 p-8">
-                    <div className="w-24 h-24 bg-cream-50 dark:bg-deepbrown-900 rounded-[2rem] flex items-center justify-center text-deepbrown-300 dark:text-cream-200/20 border border-deepbrown-50 dark:border-white/5 shadow-inner">
-                        <Plus className="w-10 h-10 rotate-45" />
-                    </div>
-                    <div className="text-center">
-                        <h3 className="text-xl font-black text-deepbrown-300 dark:text-cream-200/20 mb-3 uppercase tracking-tighter">{product.name}</h3>
-                        <span className="px-6 py-2.5 bg-cream-50 dark:bg-deepbrown-900 text-terracotta-500 rounded-full text-[10px] font-black uppercase tracking-[0.2em] shadow-sm border border-terracotta-500/10">
-                            Coming Soon
-                        </span>
-                    </div>
-                </div>
-            </motion.div>
-        );
-    }
+    
+    // Fallbacks for fields not in user schema
+    const bgColor = product.color || "bg-terracotta-500";
+    const textColor = product.textColor || "text-white";
+    const flavorText = product.flavor || "Ubi Crunch";
 
     return (
         <motion.div
@@ -39,7 +20,7 @@ const ProductCard = ({ product }) => {
             {/* Background Blob */}
             <div className={cn(
                 "absolute top-0 right-0 w-32 h-32 rounded-bl-full opacity-10 transition-transform duration-700 group-hover:scale-150",
-                product.color
+                bgColor
             )} />
 
             {/* Content */}
@@ -48,7 +29,7 @@ const ProductCard = ({ product }) => {
                 <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-cream-50 dark:bg-deepbrown-900/50 flex items-center justify-center group-hover:shadow-inner transition-all duration-500">
                     <motion.img
                         initial={{ scale: 0.95 }}
-                        whileHover={{ scale: 1.1, rotate: 2 }}
+                        whileHover={product.stock > 0 ? { scale: 1.1, rotate: 2 } : {}}
                         transition={{ type: "spring", stiffness: 200, damping: 20 }}
                         src={product.image_url || product.image || "https://placehold.co/400x400/png?text=No+Image"}
                         alt={product.name}
@@ -56,19 +37,31 @@ const ProductCard = ({ product }) => {
                             e.target.onerror = null; 
                             e.target.src = "https://placehold.co/400x400/png?text=Image+Error";
                         }}
-                        className="w-56 h-56 object-cover drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
+                        className={cn(
+                            "w-56 h-56 object-cover drop-shadow-[0_20px_50px_rgba(0,0,0,0.3)]",
+                            (product.stock <= 0 || !product.is_available) && "grayscale opacity-50"
+                        )}
                     />
                     
                     {/* Flavor Tag Overlay */}
                     <div className="absolute top-4 left-4">
                         <span className={cn(
                             "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-lg",
-                            product.color,
-                            product.textColor
+                            bgColor,
+                            textColor
                         )}>
-                            {product.flavor}
+                            {flavorText}
                         </span>
                     </div>
+
+                    {/* Sold Out Overlay */}
+                    {(product.stock <= 0 || !product.is_available) && (
+                        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                            <span className="px-6 py-2 bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-black uppercase tracking-[0.2em] rounded-full shadow-2xl">
+                                {product.is_available === false ? 'Not Available' : 'Sold Out'}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Info - Refined Padding */}
@@ -84,8 +77,14 @@ const ProductCard = ({ product }) => {
                         </span>
                         
                         <button
-                            onClick={() => addToCart(product)}
-                            className="bg-deepbrown-900 dark:bg-terracotta-500 text-white p-4 rounded-2xl hover:bg-terracotta-500 dark:hover:bg-terracotta-400 transition-all shadow-xl active:scale-90 group-hover:rotate-6"
+                            onClick={() => product.stock > 0 && product.is_available && addToCart(product)}
+                            disabled={product.stock <= 0 || !product.is_available}
+                            className={cn(
+                                "p-4 rounded-2xl transition-all shadow-xl active:scale-90 group-hover:rotate-6",
+                                (product.stock <= 0 || !product.is_available) 
+                                    ? "bg-deepbrown-200 dark:bg-deepbrown-700 text-deepbrown-400 cursor-not-allowed shadow-none" 
+                                    : "bg-deepbrown-900 dark:bg-terracotta-500 text-white hover:bg-terracotta-500 dark:hover:bg-terracotta-400"
+                            )}
                         >
                             <Plus className="w-6 h-6" />
                         </button>

@@ -8,15 +8,18 @@ import {
     LogOut,
     Menu,
     X,
-
+    Sun,
+    Moon,
     Mail
 } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useTheme } from '../../context/ThemeContext';
 import api from '../../api/api';
 
 const AdminLayout = ({ children }) => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const { theme, toggleTheme } = useTheme();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -26,7 +29,6 @@ const AdminLayout = ({ children }) => {
         { icon: ShoppingCart, label: 'Penjualan', path: '/admin/sales' },
         { icon: ShoppingCart, label: 'Pesanan', path: '/admin/orders' },
         { icon: Mail, label: 'Pesan Masuk', path: '/admin/messages' },
-        { icon: Settings, label: 'Settings', path: '/admin/settings' },
     ];
 
     const handleLogout = async () => {
@@ -173,6 +175,12 @@ const AdminLayout = ({ children }) => {
                     </button>
 
                     <div className="flex items-center gap-6">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2.5 bg-cream-50 dark:bg-deepbrown-900 rounded-xl hover:bg-terracotta-500 transition-all text-deepbrown-600 dark:text-cream-200 hover:text-white"
+                        >
+                            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                        </button>
 
                         <div className="flex items-center pl-6 border-l border-deepbrown-50 dark:border-deepbrown-700">
                             <div className="text-right hidden sm:block">

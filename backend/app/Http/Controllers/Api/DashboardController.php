@@ -12,10 +12,10 @@ class DashboardController extends Controller
     public function index()
     {
         $totalProducts = Menu::count();
-        $totalOrders = Order::where('status', '!=', 'cancelled')->count();
+        $totalOrders = Order::count(); // "jangan dibatasi" - show total orders regardless of status
         $totalSales = Order::where('status', 'completed')->sum('total_price');
 
-        $recentOrders = Order::latest()->take(5)->get();
+        $recentOrders = Order::latest()->paginate(5); // "batasi 5 dan dibuat paginate"
 
         return response()->json([
             'stats' => [

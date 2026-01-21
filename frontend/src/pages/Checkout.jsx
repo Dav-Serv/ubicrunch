@@ -50,11 +50,17 @@ const Checkout = () => {
 
             // Submit order to backend
             const response = await api.post('/order-buat', orderData);
-            const { order_code } = response.data;
+            const { order_code, whatsapp_url } = response.data;
 
             // Clear cart and navigate to order status
             clearCart();
-            navigate(`/order-status/${order_code}`);
+            
+            // Open WhatsApp in new tab
+            if (whatsapp_url) {
+                window.open(whatsapp_url, '_blank');
+            }
+            
+            navigate(`/order-status/${order_code}`, { state: { whatsapp_url } });
         } catch (error) {
             console.error('Order failed:', error);
             const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Gagal membuat pesanan. Silakan coba lagi.';

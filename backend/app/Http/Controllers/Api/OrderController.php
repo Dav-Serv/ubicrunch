@@ -124,6 +124,20 @@ class OrderController extends Controller
             ->where('order_code', $code)
             ->firstOrFail();
 
+        // Regenerate WA Message for status page
+        $message  = "Halo Admin 👋\n";
+        $message .= "Saya mau konfirmasi pesanan:\n\n";
+        $message .= "Kode: {$order->order_code}\n";
+        $message .= "Nama: {$order->customer_name}\n";
+        $message .= "Total: Rp " . number_format($order->total_price) . "\n\n";
+        $message .= "Terima kasih 🙏";
+
+        $adminPhone = '6282327009116';
+        $waUrl = "https://wa.me/{$adminPhone}?text=" . urlencode($message);
+
+        // Add wa_url to order object
+        $order->whatsapp_url = $waUrl;
+
         return response()->json($order);
     }
 
@@ -132,9 +146,16 @@ class OrderController extends Controller
      */
     public function index()
     {
-        return response()->json(
-            Order::with('items.menu')->latest()->get()
-        );
+        $orders = Order::with('items.menu')->latest()->paginate(5);
+
+        return response()->json([
+            'orders' => $orders,
+            'stats' => [
+                'total_revenue' => Order::where('status', 'completed')->sum('total_price'),
+                'completed_count' => Order::where('status', 'completed')->count(),
+                'processing_count' => Order::whereNotIn('status', ['completed', 'cancelled'])->count(),
+            ]
+        ]);
     }
 
     /**
@@ -153,5 +174,54 @@ class OrderController extends Controller
         return response()->json([
             'message' => 'Status order diperbarui',
         ]);
+    }
+
+    /**
+     * ADMIN - EXPORT REKAP (CSV)
+     */
+    public function export()
+    {
+        $orders = Order::latest()->get();
+
+        $callback = function () use ($orders) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, [
+                'Kode Pesanan',
+                'Customer',
+                'Email',
+                'No HP',
+                'Alamat',
+                'Metode Pembayaran',
+                'Status',
+                'Total Harga',
+                'Tanggal'
+            ]);
+
+            foreach ($orders as $order) {
+                fputcsv($file, [
+                    $order->order_code,
+                    $order->customer_name,
+                    $order->customer_email,
+                    $order->customer_phone,
+                    $order->customer_address,
+                    strtoupper($order->payment_method),
+                    strtoupper($order->status),
+                    $order->total_price,
+                    $order->created_at->format('d-m-Y H:i')
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        $headers = [
+            "Content-type"        => "text/csv",
+            "Content-Disposition" => "attachment; filename=rekap-penjualan-" . date('d-m-Y') . ".csv",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        return response()->stream($callback, 200, $headers);
     }
 }

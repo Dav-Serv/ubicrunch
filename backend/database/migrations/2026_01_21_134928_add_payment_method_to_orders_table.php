@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('menus', function (Blueprint $table) {
-            if (!Schema::hasColumn('menus', 'stock')) {
-                $table->integer('stock')->default(0)->after('price');
+        Schema::table('orders', function (Blueprint $table) {
+            if (!Schema::hasColumn('orders', 'payment_method')) {
+                $table->string('payment_method')->after('total_price');
             }
         });
     }
@@ -23,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('menus', function (Blueprint $table) {
-            $table->dropColumn('stock');
+        Schema::table('orders', function (Blueprint $table) {
+            //
         });
     }
 };

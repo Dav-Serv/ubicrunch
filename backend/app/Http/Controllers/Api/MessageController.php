@@ -10,7 +10,7 @@ class MessageController extends Controller
 {
     public function index()
     {
-        $messages = Message::latest()->get();
+        $messages = Message::latest()->paginate(5);
         return response()->json($messages);
     }
 

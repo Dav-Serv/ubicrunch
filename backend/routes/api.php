@@ -11,8 +11,9 @@ use App\Http\Controllers\Api\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// menu
+// contact
 Route::get('/menu', [MenuController::class, 'menu']);
+Route::post('/contact', [MessageController::class, 'store']);
 
 // order
 Route::post('/order-buat', [OrderController::class, 'store']);
@@ -28,11 +29,13 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     // messages
     Route::get('/messages', [MessageController::class, 'index']);
     // menu
+    Route::get('/menu', [MenuController::class, 'index']);
     Route::post('/menu-tambah', [MenuController::class, 'store']);
     Route::post('/menu-update/{menu}', [MenuController::class, 'update']);
     Route::delete('/menu-hapus/{menu}', [MenuController::class, 'destroy']);
 
     // order
     Route::get('/order', [OrderController::class, 'index']);
+    Route::get('/order/export', [OrderController::class, 'export']);
     Route::post('/order-status/{order}', [OrderController::class, 'updateStatus']);
 });

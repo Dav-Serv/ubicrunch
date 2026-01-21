@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('stock');
             $table->text('description')->nullable();
             $table->string('image')->nullable();
-            $table->boolean('is_available')->default(true);
+            $table->boolean('is_available')->default(true); 
             $table->timestamps();
         });
     }

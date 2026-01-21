@@ -9,15 +9,26 @@ const AdminMessages = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [loading, setLoading] = useState(true);
     const [selectedMessage, setSelectedMessage] = useState(null);
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        last_page: 1,
+        total: 0
+    });
 
     useEffect(() => {
         fetchMessages();
     }, []);
 
-    const fetchMessages = async () => {
+    const fetchMessages = async (page = 1) => {
+        setLoading(true);
         try {
-            const response = await api.get('/admin/messages');
-            setMessages(response.data);
+            const response = await api.get(`/admin/messages?page=${page}`);
+            setMessages(response.data.data);
+            setPagination({
+                current_page: response.data.current_page,
+                last_page: response.data.last_page,
+                total: response.data.total
+            });
         } catch (error) {
             console.error('Failed to fetch messages:', error);
         } finally {
@@ -128,6 +139,31 @@ const AdminMessages = () => {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Controls */}
+                {pagination.last_page > 1 && (
+                    <div className="px-4 md:px-8 py-4 bg-cream-50/50 dark:bg-deepbrown-900/30 border-t border-deepbrown-50 dark:border-deepbrown-700 flex items-center justify-between">
+                        <p className="text-[10px] md:text-sm font-black text-deepbrown-400 dark:text-cream-200/40 uppercase tracking-widest">
+                            Halaman {pagination.current_page} dari {pagination.last_page} ({pagination.total} Pesan)
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button 
+                                onClick={() => fetchMessages(pagination.current_page - 1)}
+                                disabled={pagination.current_page === 1}
+                                className="px-4 py-2 bg-white dark:bg-deepbrown-800 text-deepbrown-900 dark:text-cream-50 rounded-xl text-xs font-black border border-deepbrown-50 dark:border-deepbrown-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-terracotta-500 hover:text-white"
+                            >
+                                Prev
+                            </button>
+                            <button 
+                                onClick={() => fetchMessages(pagination.current_page + 1)}
+                                disabled={pagination.current_page === pagination.last_page}
+                                className="px-4 py-2 bg-white dark:bg-deepbrown-800 text-deepbrown-900 dark:text-cream-50 rounded-xl text-xs font-black border border-deepbrown-50 dark:border-deepbrown-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-terracotta-500 hover:text-white"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Message Detail Modal */}

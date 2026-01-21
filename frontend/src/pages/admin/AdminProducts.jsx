@@ -12,15 +12,25 @@ const AdminProducts = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingProduct, setEditingProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [pagination, setPagination] = useState({
+        current_page: 1,
+        last_page: 1,
+        total: 0
+    });
 
     useEffect(() => {
         fetchProducts();
     }, []);
 
-    const fetchProducts = async () => {
+    const fetchProducts = async (page = 1) => {
         try {
-            const response = await api.get('/menu');
-            setProducts(response.data);
+            const response = await api.get(`/admin/menu?page=${page}`);
+            setProducts(response.data.data);
+            setPagination({
+                current_page: response.data.current_page,
+                last_page: response.data.last_page,
+                total: response.data.total
+            });
             setLoading(false);
         } catch (error) {
             console.error('Failed to fetch products:', error);
@@ -33,7 +43,7 @@ const AdminProducts = () => {
             await api.post('/admin/menu-tambah', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            fetchProducts();
+            fetchProducts(pagination.current_page);
             alert('Produk berhasil ditambahkan!');
         } catch (error) {
             console.error('Failed to add product:', error);
@@ -46,7 +56,7 @@ const AdminProducts = () => {
             await api.post(`/admin/menu-update/${editingProduct.id}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-            fetchProducts();
+            fetchProducts(pagination.current_page);
             alert('Produk berhasil diupdate!');
         } catch (error) {
             console.error('Failed to update product:', error);
@@ -59,7 +69,7 @@ const AdminProducts = () => {
 
         try {
             await api.delete(`/admin/menu-hapus/${id}`);
-            fetchProducts();
+            fetchProducts(pagination.current_page);
             alert('Produk berhasil dihapus!');
         } catch (error) {
             console.error('Failed to delete product:', error);
@@ -82,9 +92,16 @@ const AdminProducts = () => {
         setEditingProduct(null);
     };
 
-    const filteredProducts = products.filter(product => 
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const [statusFilter, setStatusFilter] = useState('all');
+
+    const filteredProducts = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = statusFilter === 'all' || 
+            (statusFilter === 'available' && product.is_available && product.stock > 0) ||
+            (statusFilter === 'out_of_stock' && product.is_available && product.stock <= 0) ||
+            (statusFilter === 'disabled' && !product.is_available);
+        return matchesSearch && matchesStatus;
+    });
 
     if (loading) {
         return (
@@ -112,7 +129,7 @@ const AdminProducts = () => {
                 </button>
             </div>
 
-            {/* Search */}
+            {/* Search and Filter */}
             <div className="bg-white dark:bg-deepbrown-800 p-3 md:p-4 rounded-2xl md:rounded-3xl shadow-sm border border-deepbrown-50 dark:border-deepbrown-700 flex flex-col md:flex-row gap-4 mb-6 md:mb-8">
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-deepbrown-400" />
@@ -124,6 +141,16 @@ const AdminProducts = () => {
                         className="w-full pl-12 pr-4 py-3 md:py-4 bg-cream-50 dark:bg-deepbrown-900 border-none rounded-xl md:rounded-2xl text-sm md:text-base text-deepbrown-900 dark:text-cream-50 focus:ring-2 focus:ring-terracotta-500/50 transition-all font-medium"
                     />
                 </div>
+                <select 
+                    value={statusFilter}
+                    onChange={(e) => setStatusFilter(e.target.value)}
+                    className="px-4 py-3 md:py-4 bg-cream-50 dark:bg-deepbrown-900 border-none rounded-xl md:rounded-2xl text-sm md:text-base text-deepbrown-900 dark:text-cream-50 focus:ring-2 focus:ring-terracotta-500/50 transition-all font-bold"
+                >
+                    <option value="all">Semua Status</option>
+                    <option value="available">Available</option>
+                    <option value="out_of_stock">Out of Stock</option>
+                    <option value="disabled">Disabled</option>
+                </select>
             </div>
 
             {/* Product Table */}
@@ -162,9 +189,15 @@ const AdminProducts = () => {
                                             </div>
                                             <div>
                                                 <p className="font-black text-sm md:text-base text-deepbrown-900 dark:text-cream-50">{product.name}</p>
-                                                <span className={`text-[10px] md:text-xs font-bold ${product.is_available ? 'text-green-600' : 'text-red-600'}`}>
-                                                    {product.is_available ? '● Available' : '● Unavailable'}
-                                                </span>
+                                                {product.is_available ? (
+                                                    product.stock > 0 ? (
+                                                        <span className="text-[10px] md:text-xs font-bold text-green-600">● Available</span>
+                                                    ) : (
+                                                        <span className="text-[10px] md:text-xs font-bold text-orange-600">● Out of Stock</span>
+                                                    )
+                                                ) : (
+                                                    <span className="text-[10px] md:text-xs font-bold text-red-600">● Disabled</span>
+                                                )}
                                             </div>
                                         </div>
                                     </td>
@@ -207,6 +240,31 @@ const AdminProducts = () => {
                         <p className="text-deepbrown-500 dark:text-cream-200/50 font-medium">
                             {searchTerm ? 'Tidak ada produk yang cocok' : 'Belum ada produk'}
                         </p>
+                    </div>
+                )}
+
+                {/* Pagination Controls */}
+                {pagination.last_page > 1 && (
+                    <div className="px-4 md:px-8 py-4 bg-cream-50/50 dark:bg-deepbrown-900/30 border-t border-deepbrown-50 dark:border-deepbrown-700 flex items-center justify-between">
+                        <p className="text-[10px] md:text-xs font-bold text-deepbrown-400 dark:text-cream-200/40 uppercase tracking-widest">
+                            Page {pagination.current_page} of {pagination.last_page} ({pagination.total} Produk)
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button 
+                                onClick={() => fetchProducts(pagination.current_page - 1)}
+                                disabled={pagination.current_page === 1}
+                                className="px-4 py-2 bg-white dark:bg-deepbrown-800 text-deepbrown-900 dark:text-cream-50 rounded-xl text-xs font-black border border-deepbrown-50 dark:border-deepbrown-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-terracotta-500 hover:text-white"
+                            >
+                                Prev
+                            </button>
+                            <button 
+                                onClick={() => fetchProducts(pagination.current_page + 1)}
+                                disabled={pagination.current_page === pagination.last_page}
+                                className="px-4 py-2 bg-white dark:bg-deepbrown-800 text-deepbrown-900 dark:text-cream-50 rounded-xl text-xs font-black border border-deepbrown-50 dark:border-deepbrown-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:bg-terracotta-500 hover:text-white"
+                            >
+                                Next
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
