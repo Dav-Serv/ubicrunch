@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\Auth\ {
     LoginController,
-    LogoutController
+    LogoutController,
 };
 use App\Http\Controllers\Api\MenuController;
 use App\Http\Controllers\Api\OrderController;

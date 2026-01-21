@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Check, CreditCard, Wallet, QrCode } from 'lucide-react';
+import { Check, Wallet } from 'lucide-react';
 import Layout from '../components/layout/Layout';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../lib/utils';
@@ -27,9 +27,10 @@ const Payment = () => {
     };
 
     const paymentMethods = [
-        { id: 'qris', name: 'QRIS', icon: QrCode, description: 'Scan via GoPay, OVO, Dana' },
-        { id: 'ewallet', name: 'E-Wallet', icon: Wallet, description: 'Link your digital wallet' },
-        { id: 'bank', name: 'Bank Transfer', icon: CreditCard, description: 'Virtual Account (BCA, Mandiri)' },
+        { id: 'dana', name: 'Dana', icon: Wallet, description: 'Bayar dengan Dana' },
+        { id: 'gopay', name: 'GoPay', icon: Wallet, description: 'Bayar dengan GoPay' },
+        { id: 'ovo', name: 'OVO', icon: Wallet, description: 'Bayar dengan OVO' },
+        { id: 'shopeepay', name: 'ShopeePay', icon: Wallet, description: 'Bayar dengan ShopeePay' },
     ];
 
     return (
@@ -53,7 +54,7 @@ const Payment = () => {
                                     <div 
                                         key={method.id}
                                         onClick={() => setSelectedMethod(method.id)}
-                                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center space-x-4 ${
+                                        className={`cursor-pointer p-4 rounded-xl border-2 transition-all flex items-center space-x-4 hover:shadow-xl hover:scale-105 hover:-translate-y-1 ${
                                             isSelected 
                                             ? 'border-terracotta-500 bg-terracotta-50 dark:bg-terracotta-900/20' 
                                             : 'border-transparent bg-gray-50 dark:bg-deepbrown-900/50 hover:bg-gray-100 dark:hover:bg-deepbrown-700'

@@ -1,15 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { ShoppingCart, Menu, X, Sun, Moon } from 'lucide-react';
+import { ShoppingCart, Menu, X, Sun, Moon, User } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { useNavigate } from 'react-router-dom';
+import api from '../../api/api';
+
 const Navbar = () => {
+    const navigate = useNavigate();
     const { setIsCartOpen, cartCount } = useCart();
     const { theme, toggleTheme } = useTheme();
     const [scrolled, setScrolled] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
+
+    const handleLogout = async () => {
+        try {
+            await api.post('/admin/logout');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        } finally {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            setUser(null);
+            navigate('/home');
+        }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -36,7 +61,7 @@ const Navbar = () => {
             <div className="container mx-auto px-4 md:px-6 flex items-center justify-between">
                 {/* Logo */}
                 <a href="/" className="text-2xl font-bold font-sans tracking-tight text-deepbrown-900 dark:text-cream-100">
-                    Ubi<span className="text-terracotta-500">Crunch</span>.
+                    Deep Chock <span className="text-terracotta-500">Ubi</span>
                 </a>
 
                 {/* Desktop Links */}
@@ -72,6 +97,28 @@ const Navbar = () => {
                             </span>
                         )}
                     </button>
+
+                    {user ? (
+                        <div className="flex items-center space-x-4">
+                            <span className="hidden lg:inline text-deepbrown-700 dark:text-cream-200 font-medium">
+                                Hi, {user.name}
+                            </span>
+                            <button
+                                onClick={handleLogout}
+                                className="px-4 py-2 bg-terracotta-500 text-white rounded-full text-sm font-bold hover:bg-terracotta-600 transition-all"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <button
+                            onClick={() => navigate('/login')}
+                            className="p-2 hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors"
+                            aria-label="Login"
+                        >
+                            <User className="w-6 h-6 text-deepbrown-900 dark:text-cream-100" />
+                        </button>
+                    )}
 
                     <button
                         className="md:hidden p-2 hover:bg-black/5 rounded-full"

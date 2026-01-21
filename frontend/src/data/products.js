@@ -1,5 +1,15 @@
-
 export const products = [
+  {
+    id: 5,
+    name: "Ubi Coklat",
+    description: "Deep Chock Ubi. Keripik ubi renyah berbalut cokelat premium yang melimpah.",
+    price: 15000,
+    image: "/products/ubi-coklat-v2.jpg",
+    color: "bg-deepbrown-900",
+    textColor: "text-cream-100",
+    flavor: "Deep Chock",
+    isComingSoon: false
+  },
   {
     id: 1,
     name: "Original Crunch",
@@ -8,7 +18,8 @@ export const products = [
     image: "https://placehold.co/400x400/png?text=Original+Crunch",
     color: "bg-cream-400",
     textColor: "text-deepbrown-900",
-    flavor: "Original"
+    flavor: "Original",
+    isComingSoon: true
   },
   {
     id: 2,
@@ -18,7 +29,8 @@ export const products = [
     image: "https://placehold.co/400x400/png?text=Spicy+Orange",
     color: "bg-terracotta-500",
     textColor: "text-white",
-    flavor: "Pedas Jeruk"
+    flavor: "Pedas Jeruk",
+    isComingSoon: true
   },
   {
     id: 3,
@@ -28,7 +40,8 @@ export const products = [
     image: "https://placehold.co/400x400/png?text=Choco+Melt",
     color: "bg-deepbrown-800",
     textColor: "text-cream-100",
-    flavor: "Cokelat"
+    flavor: "Cokelat",
+    isComingSoon: true
   },
   {
     id: 4,
@@ -38,16 +51,7 @@ export const products = [
     image: "https://placehold.co/400x400/png?text=Salted+Egg",
     color: "bg-yellow-400",
     textColor: "text-deepbrown-900",
-    flavor: "Salted Egg"
-  },
-  {
-    id: 5,
-    name: "Ubi Coklat",
-    description: "Deep Chock Ubi. Keripik ubi renyah berbalut cokelat premium yang melimpah.",
-    price: 15000,
-    image: "/products/ubi-coklat.jpg",
-    color: "bg-deepbrown-900",
-    textColor: "text-cream-100",
-    flavor: "Deep Chock"
+    flavor: "Salted Egg",
+    isComingSoon: true
   }
 ];

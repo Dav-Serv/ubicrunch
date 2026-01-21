@@ -1,7 +1,8 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import api from '../../api/api';
 import ProductCard from './ProductCard';
-import { products } from '../../data/products';
+import { products as fallbackProducts } from '../../data/products';
 
 const container = {
     hidden: { opacity: 0 },
@@ -19,8 +20,24 @@ const item = {
 };
 
 const ProductGrid = () => {
+    const [products, setProducts] = useState(fallbackProducts);
+
+    useEffect(() => {
+        const fetchMenus = async () => {
+            try {
+                const response = await api.get('/menu');
+                if (response.data && response.data.length > 0) {
+                    setProducts(response.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch menus:', error);
+            }
+        };
+
+        fetchMenus();
+    }, []);
     return (
-        <section id="shop" className="py-20 px-4 md:px-6 bg-cream-50 dark:bg-deepbrown-900 transition-colors duration-300">
+        <section id="shop" className="py-24 px-4 md:px-6 bg-cream-50 dark:bg-deepbrown-900 transition-colors duration-300">
             <div className="container mx-auto">
                 <div className="text-center max-w-2xl mx-auto mb-16">
                     <h2 className="text-4xl md:text-5xl font-bold text-deepbrown-900 dark:text-cream-50 mb-4">
@@ -47,7 +64,6 @@ const ProductGrid = () => {
                         <motion.div 
                             key={product.id}
                             variants={item}
-                            className={index === 0 ? "md:col-span-2 md:row-span-1" : ""}
                         >
                             <ProductCard product={product} />
                         </motion.div>

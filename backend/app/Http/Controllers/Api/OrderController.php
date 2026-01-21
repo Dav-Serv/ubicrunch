@@ -23,7 +23,7 @@ class OrderController extends Controller
             'customer_address' => 'required|string|max:255',
 
             // 🔥 PAYMENT (HANYA METHOD)
-            'payment_method'   => 'required|in:dana, gopay, ovo, shopeepay',
+            'payment_method'   => 'required|in:dana,gopay,ovo,shopeepay',
 
             // ITEMS
             'items'            => 'required|array|min:1',
@@ -90,7 +90,7 @@ class OrderController extends Controller
             DB::commit();
 
             // 📱 NOMOR WA ADMIN (GANTI SESUAI PUNYAMU)
-            $adminPhone = '6281234567890';
+            $adminPhone = '6282287680244';
 
             $waUrl = "https://wa.me/{$adminPhone}?text=" . urlencode($message);
 

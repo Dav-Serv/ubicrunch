@@ -14,17 +14,13 @@ const Layout = ({ children }) => {
                 <div className="container mx-auto px-6">
                     <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
                         <div className="mb-6 md:mb-0">
-                            <h2 className="text-2xl font-bold font-sans dark:text-cream-100">Ubi<span className="text-terracotta-500">Crunch</span>.</h2>
+                            <h2 className="text-2xl font-bold font-sans dark:text-cream-100">Deep Chock <span className="text-terracotta-500">Ubi</span></h2>
                             <p className="text-deepbrown-200 dark:text-gray-400 mt-2">Premium Sweet Potato Chips</p>
                         </div>
-                        <div className="flex space-x-8">
-                            <a href="#" className="hover:text-terracotta-500 dark:hover:text-terracotta-400 transition-colors">Privacy</a>
-                            <a href="#" className="hover:text-terracotta-500 dark:hover:text-terracotta-400 transition-colors">Terms</a>
-                            <a href="#" className="hover:text-terracotta-500 dark:hover:text-terracotta-400 transition-colors">Instagram</a>
-                        </div>
+
                     </div>
                     <div className="mt-12 pt-8 border-t border-deepbrown-800 dark:border-gray-800 text-center text-deepbrown-400 dark:text-gray-500 text-sm">
-                        &copy; {new Date().getFullYear()} UbiCrunch. All rights reserved.
+                        &copy; {new Date().getFullYear()} Deep Chock Ubi. All rights reserved.
                     </div>
                 </div>
             </footer>
